@@ -3,9 +3,7 @@ import itertools
 import json
 import re
 from dataclasses import asdict, dataclass, field
-from pathlib import Path
 
-import requests
 from rich.syntax import Syntax
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Horizontal, Vertical, VerticalScroll
@@ -29,12 +27,9 @@ from textual.widgets import (
 )
 from thefuzz import process
 
-from settings import Settings
+from responses import get_responses
 from schemas import FormResponse
-
-settings = Settings()  # type: ignore
-cookies = {"token": settings.forms_api_key}
-
+from settings import settings
 
 QUERY_REGEX = re.compile(r"\w+:\w+:?\w+")
 
@@ -302,26 +297,7 @@ class ResponseTree(Widget):
             super().__init__()
 
     def __init__(self, id):
-        r = requests.get(
-            "https://forms-api.pythondiscord.com/forms/cj10-2023-qualifier/responses",
-            cookies=cookies,
-        )
-        participating = requests.get(
-            "https://forms-api.pythondiscord.com/forms/cj10-2023-participation-confirmation/responses",
-            cookies=cookies,
-        ).json()
-
-        participating_ids = [p["user"]["id"] for p in participating]
-
-        self.responses = [
-            FormResponse(**i) for i in r.json() if i["user"]["id"] in participating_ids
-        ]
-
-        filename = Path(__file__).parent.absolute() / "chatgpt_response.json"
-        with open(filename, "r") as f:
-            chatgpt_respose = json.load(f)
-
-        self.responses.append(FormResponse(**chatgpt_respose))
+        self.responses = get_responses()
 
         super().__init__(id=id)
 
