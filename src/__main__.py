@@ -1,38 +1,36 @@
-import json
 import difflib
-import re
-import os
 import itertools
-
+import json
+import os
+import re
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from dataclasses import dataclass, asdict, field
 from typing import TypedDict
 
 import requests
-
+from dotenv import load_dotenv
+from rich.syntax import Syntax
 from textual.app import App, ComposeResult
-from textual.widget import Widget
-from textual.containers import Horizontal, VerticalScroll, Grid, Vertical
+from textual.containers import Grid, Horizontal, Vertical, VerticalScroll
+from textual.message import Message
+from textual.reactive import var
 from textual.screen import Screen
+from textual.widget import Widget
 from textual.widgets import (
-    Static,
-    Header,
-    Tree,
+    Button,
     Footer,
+    Header,
+    Input,
+    Label,
+    ListItem,
+    ListView,
+    Pretty,
+    Static,
     TabbedContent,
     TabPane,
-    Pretty,
-    Button,
-    Label,
-    ListView,
-    ListItem,
-    Input,
+    Tree,
 )
-from textual.reactive import var
-from textual.message import Message
-from rich.syntax import Syntax
 from thefuzz import process
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -166,10 +164,7 @@ class FlaggedView(Screen):
                 classes="flagged",
             ),
             ListView(
-                *(
-                    ListItem(Label(r.user["username"]), classes="lilabel")
-                    for r in marked.generated
-                ),
+                *(ListItem(Label(r.user["username"]), classes="lilabel") for r in marked.generated),
                 classes="flagged",
             ),
             id="flagged-view",
@@ -227,7 +222,9 @@ class DiffView(Screen):
             grid = self.query_one("#dialog", Grid)
             grid.remove()
 
-            self.app.sub_title = f"{self.first_response.user['username']} x {self.second_response.user['username']}"
+            self.app.sub_title = (
+                f"{self.first_response.user['username']} x {self.second_response.user['username']}"
+            )
 
             self.mount(
                 Static(
@@ -249,9 +246,7 @@ class FilterView(Screen):
 
     def compose(self) -> ComposeResult:
         yield Vertical(
-            Static(
-                "Filter your results in the format `filter:<type>:value`.", id="fprompt"
-            ),
+            Static("Filter your results in the format `filter:<type>:value`.", id="fprompt"),
             Input(placeholder="query"),
             ListView(id="results"),
             Button("Return", variant="warning", id="cancel"),
@@ -279,9 +274,7 @@ class FilterView(Screen):
 
     def on_list_view_selected(self, message: ListView.Selected):
         self.app.post_message(
-            ResponseTree.ResponseSelected(
-                message.item.children[0].renderable, message.item.data
-            )
+            ResponseTree.ResponseSelected(message.item.children[0].renderable, message.item.data)
         )
 
         self.app.pop_screen()
@@ -349,9 +342,7 @@ class DiffAllView(Screen):
 
     def on_list_view_selected(self, message: ListView.Selected):
         self.app.post_message(
-            ResponseTree.ResponseSelected(
-                message.item.children[0].renderable, message.item.data
-            )
+            ResponseTree.ResponseSelected(message.item.children[0].renderable, message.item.data)
         )
 
         self.app.pop_screen()
@@ -444,9 +435,7 @@ class Responses(App):
 
         yield Footer()
 
-    def on_response_tree_response_selected(
-        self, message: ResponseTree.ResponseSelected
-    ):
+    def on_response_tree_response_selected(self, message: ResponseTree.ResponseSelected):
         code_view = self.query_one("#code", Static)
         code = message.data.response["qualifier"]["value"]
         syntax = Syntax(code, "python", line_numbers=True)
@@ -513,32 +502,20 @@ def filter_responses(query: str, responses: list[FormResponse]) -> list[FormResp
     match query.split(":"):
         case ["username" | "user", username]:
             usernames = [r.user["username"] for r in responses]
-            matches = [
-                m[0]
-                for m in process.extract(username, usernames, limit=10)
-                if m[1] >= 75
-            ]
+            matches = [m[0] for m in process.extract(username, usernames, limit=10) if m[1] >= 75]
             return [r for r in responses if r.user["username"] in matches]
         case ["username" | "user", "exact", username]:
             return [r for r in responses if r.user["username"] == username]
         case ["response" | "res", response]:
-            return [
-                r for r in responses if response in r.response["qualifier"]["value"]
-            ]
+            return [r for r in responses if response in r.response["qualifier"]["value"]]
         case ["response" | "res", "fuzzy", response]:
             qualifier_responses = [r.response["qualifier"]["value"] for r in responses]
             matches = [
-                m[0]
-                for m in process.extract(response, qualifier_responses, limit=10)
-                if m[1] > 75
+                m[0] for m in process.extract(response, qualifier_responses, limit=10) if m[1] > 75
             ]
             return [r for r in responses if r.response["qualifier"]["value"] in matches]
         case ["response" | "res", "re" | "regex", pattern]:
-            return [
-                r
-                for r in responses
-                if re.search(pattern, r.response["qualifier"]["value"])
-            ]
+            return [r for r in responses if re.search(pattern, r.response["qualifier"]["value"])]
         case _:
             return []
 

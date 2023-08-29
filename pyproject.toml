@@ -24,4 +24,26 @@ build-backend = "pdm.backend"
 [tool.pdm.dev-dependencies]
 format = [
     "black>=23.7.0",
+    "isort>=5.12.0",
 ]
+repl = [
+    "ipython>=8.14.0",
+]
+lint = [
+    "flake8>=6.1.0",
+    "pyright>=1.1.324",
+]
+
+[tool.pdm.scripts]
+format = { shell = "black . && isort ." }
+lint = { shell = "pyright && flake8" }
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+
+[tool.pyright]
+include = ["src/**/*.py"]
+strict = ["src/**/*.py"]
