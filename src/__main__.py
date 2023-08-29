@@ -6,10 +6,8 @@ import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import TypedDict
-from settings import Settings
 
 import requests
-from dotenv import load_dotenv
 from rich.syntax import Syntax
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Horizontal, Vertical, VerticalScroll
@@ -33,7 +31,7 @@ from textual.widgets import (
 )
 from thefuzz import process
 
-load_dotenv()
+from settings import Settings
 
 settings = Settings()  # type: ignore
 cookies = {"token": settings.forms_api_key}
