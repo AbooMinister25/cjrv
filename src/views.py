@@ -33,7 +33,7 @@ class FlaggedView(Screen[None]):
         )
 
 
-class DiffView(Screen):
+class DiffView(Screen[None]):
     is_first = var(True)
 
     def __init__(self, responses: list[FormResponse]):
@@ -100,7 +100,7 @@ class DiffView(Screen):
             self.app.pop_screen()
 
 
-class FilterView(Screen):
+class FilterView(Screen[None]):
     def __init__(self, responses: list[FormResponse]):
         self.responses = responses
 
@@ -145,7 +145,7 @@ class FilterView(Screen):
         self.app.pop_screen()
 
 
-class DiffAllView(Screen):
+class DiffAllView(Screen[None]):
     def __init__(self, responses: list[FormResponse]):
         self.responses = responses
 

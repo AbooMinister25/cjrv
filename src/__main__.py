@@ -26,7 +26,7 @@ from schemas import FormResponse
 from views import DiffAllView, DiffView, FilterView, FlaggedView
 
 
-class ConfirmPlagiarism(Screen):
+class ConfirmPlagiarism(Screen[None]):
     def __init__(self, form: FormResponse):
         self.form = form
         super().__init__()
@@ -46,7 +46,7 @@ class ConfirmPlagiarism(Screen):
         self.app.pop_screen()
 
 
-class ConfirmGenerated(Screen):
+class ConfirmGenerated(Screen[None]):
     def __init__(self, form: FormResponse):
         self.form = form
         super().__init__()
