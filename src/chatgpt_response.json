@@ -1,0 +1,40 @@
+{
+    "id": "chatgpt",
+    "user": {
+        "username": "chatgpt",
+        "id": "test",
+        "discriminator": "0",
+        "avatar": "chatgpt",
+        "bot": null,
+        "system": null,
+        "locale": "chatgpt",
+        "verified": null,
+        "email": null,
+        "flags": 64,
+        "premium_type": 0,
+        "public_flags": 64,
+        "admin": false
+    },
+    "antispam": {
+        "ip_hash": "chatgpt",
+        "user_agent_hash": "chatgpt",
+        "captcha_pass": false
+    },
+    "response": {
+        "age-range": "chatgpt",
+        "timezone-explainer": false,
+        "timezone": "chatgpt",
+        "python-experience": "chatgpt",
+        "git-experience": "chatgpt",
+        "team-leader": "chatgpt",
+        "code-jam-experience": "chatgpt",
+        "qualifier-text": false,
+        "qualifier": {
+            "value": "from PIL import Image\n\ndef valid_input(image_size, tile_size, ordering):\n    if image_size[0] % tile_size[0] != 0 or image_size[1] % tile_size[1] != 0:\n        return False\n    \n    return sorted(ordering) == list(range(len(ordering)))\n\ndef rearrange_tiles(image_path, tile_size, ordering, out_path):\n    # Open the input image\n    input_image = Image.open(image_path)\n    input_width, input_height = input_image.size\n    \n    num_tiles_x = input_width // tile_size[0]\n    num_tiles_y = input_height // tile_size[1]\n    total_tiles = num_tiles_x * num_tiles_y\n    \n    if not valid_input((input_width, input_height), tile_size, ordering):\n        raise ValueError(\\The tile size or ordering are not valid for the given image\\)\n    \n    new_image = Image.new('RGB', (input_width, input_height))\n    \n    for index, new_tile_index in enumerate(ordering):\n        source_tile_x = (index % num_tiles_x) * tile_size[0]\n        source_tile_y = (index // num_tiles_x) * tile_size[1]\n        \n        target_tile_x = (new_tile_index % num_tiles_x) * tile_size[0]\n        target_tile_y = (new_tile_index // num_tiles_x) * tile_size[1]\n        \n        source_region = (source_tile_x, source_tile_y, source_tile_x + tile_size[0], source_tile_y + tile_size[1])\n        target_position = (target_tile_x, target_tile_y)\n        \n        tile = input_image.crop(source_region)\n        new_image.paste(tile, target_position)\n    \n    new_image.save(out_path)",
+            "passed": false,
+            "failures": []
+        }
+    },
+    "form_id": "chatgpt",
+    "timestamp": "chatgpt"
+}

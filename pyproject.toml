@@ -1,0 +1,27 @@
+[project]
+name = "cjrv"
+version = "0.1.0"
+description = "A script for viewing responses from the python discord codejam qualifier."
+authors = [
+    {name = "AbooMinister25",email = "aboominister@gmail.com"},
+]
+dependencies = [
+    "requests>=2.31.0",
+    "textual>=0.34.0",
+    "thefuzz>=0.20.0",
+    "python-dotenv>=1.0.0",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool]
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+format = [
+    "black>=23.7.0",
+]
