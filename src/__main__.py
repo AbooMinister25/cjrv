@@ -6,6 +6,7 @@ import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import TypedDict
+from settings import Settings
 
 import requests
 from dotenv import load_dotenv
@@ -34,17 +35,8 @@ from thefuzz import process
 
 load_dotenv()
 
-
-class MissingToken(Exception):
-    pass
-
-
-token = os.getenv("FORMS_API_TOKEN")
-
-if not token:
-    raise MissingToken("Environment variable FORMS_API_TOKEN must be set")
-
-cookies = {"token": token}
+settings = Settings()  # type: ignore
+cookies = {"token": settings.forms_api_key}
 
 
 QUERY_REGEX = re.compile(r"\w+:\w+:?\w+")
