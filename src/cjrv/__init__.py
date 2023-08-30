@@ -4,10 +4,8 @@ from dataclasses import asdict
 from rich.syntax import Syntax
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Horizontal, VerticalScroll
-from textual.message import Message
 from textual.reactive import var
 from textual.screen import Screen
-from textual.widget import Widget
 from textual.widgets import (
     Button,
     Footer,
@@ -17,11 +15,9 @@ from textual.widgets import (
     Static,
     TabbedContent,
     TabPane,
-    Tree,
 )
 
 from .marked import marked
-from .responses import get_responses
 from .schemas import FormResponse
 from .views import DiffAllView, DiffView, FilterView, FlaggedView
 from .widgets import ResponseTree
