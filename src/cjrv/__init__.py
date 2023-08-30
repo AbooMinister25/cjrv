@@ -24,6 +24,7 @@ from .marked import marked
 from .responses import get_responses
 from .schemas import FormResponse
 from .views import DiffAllView, DiffView, FilterView, FlaggedView
+from .widgets import ResponseTree
 
 
 class ConfirmPlagiarism(Screen[None]):
@@ -64,36 +65,6 @@ class ConfirmGenerated(Screen[None]):
             marked.generated.append(self.form)
 
         self.app.pop_screen()
-
-
-class ResponseTree(Widget):
-    """A tree of responses"""
-
-    class ResponseSelected(Message):
-        """Selected response"""
-
-        def __init__(self, label, data):
-            self.label = label
-            self.data = data
-            super().__init__()
-
-    def __init__(self, id):
-        self.responses = get_responses()
-
-        super().__init__(id=id)
-
-    def compose(self) -> ComposeResult:
-        tree = Tree("responses")
-        tree.root.expand()
-
-        for response in self.responses:
-            tree.root.add_leaf(response.user["username"], data=response)
-
-        yield tree
-
-    def on_tree_node_selected(self, event):
-        if event.node.data is not None:
-            self.post_message(self.ResponseSelected(event.node.label, event.node.data))
 
 
 class Responses(App):
