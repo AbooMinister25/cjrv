@@ -2,7 +2,7 @@ import re
 
 from thefuzz import process
 
-from schemas import FormResponse
+from .schemas import FormResponse
 
 QUERY_REGEX = re.compile(r"\w+:\w+:?\w+")
 

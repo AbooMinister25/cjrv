@@ -20,10 +20,10 @@ from textual.widgets import (
     Tree,
 )
 
-from marked import marked
-from responses import get_responses
-from schemas import FormResponse
-from views import DiffAllView, DiffView, FilterView, FlaggedView
+from .marked import marked
+from .responses import get_responses
+from .schemas import FormResponse
+from .views import DiffAllView, DiffView, FilterView, FlaggedView
 
 
 class ConfirmPlagiarism(Screen[None]):
@@ -190,7 +190,7 @@ class Responses(App):
         self.query_one(ResponseTree).focus()
 
 
-if __name__ == "__main__":
+def main() -> None:
     app = Responses()
     app.run()
 

@@ -3,8 +3,8 @@ from pathlib import Path
 
 import requests
 
-from schemas import FormResponse
-from settings import settings
+from .schemas import FormResponse
+from .settings import settings
 
 
 def get_responses() -> list[FormResponse]:

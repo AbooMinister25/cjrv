@@ -6,7 +6,7 @@ groups = ["default", "format", "repl", "lint"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:ef3a34619e763b2976ed74661600421db9045bfb1aceb22bba603b2a7b68deaf"
+content_hash = "sha256:cdaf3b3ae1ceb629b59d65a0aa5e85424e95228730b09ecbc413697701008f00"
 
 [[package]]
 name = "annotated-types"

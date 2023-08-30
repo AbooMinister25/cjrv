@@ -2,9 +2,7 @@
 name = "cjrv"
 version = "0.1.0"
 description = "A script for viewing responses from the python discord codejam qualifier."
-authors = [
-    {name = "AbooMinister25",email = "aboominister@gmail.com"},
-]
+authors = [{ name = "AbooMinister25", email = "aboominister@gmail.com" }]
 dependencies = [
     "requests>=2.31.0",
     "textual>=0.34.0",
@@ -14,7 +12,7 @@ dependencies = [
 ]
 requires-python = ">=3.11"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 
 [build-system]
 requires = ["pdm-backend"]
@@ -23,17 +21,9 @@ build-backend = "pdm.backend"
 [tool]
 [tool.pdm]
 [tool.pdm.dev-dependencies]
-format = [
-    "black>=23.7.0",
-    "isort>=5.12.0",
-]
-repl = [
-    "ipython>=8.14.0",
-]
-lint = [
-    "flake8>=6.1.0",
-    "pyright>=1.1.324",
-]
+format = ["black>=23.7.0", "isort>=5.12.0"]
+repl = ["ipython>=8.14.0"]
+lint = ["flake8>=6.1.0", "pyright>=1.1.324"]
 
 [tool.pdm.scripts]
 format = { shell = "black . && isort ." }
@@ -48,3 +38,6 @@ profile = "black"
 [tool.pyright]
 include = ["src/**/*.py"]
 strict = ["src/**/*.py"]
+
+[project.scripts]
+cjrv = "cjrv.__main__:main"

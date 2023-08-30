@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from schemas import FormResponse
+from .schemas import FormResponse
 
 
 @dataclass

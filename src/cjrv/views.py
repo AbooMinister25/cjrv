@@ -8,9 +8,9 @@ from textual.reactive import var
 from textual.screen import Screen
 from textual.widgets import Button, Input, Label, ListItem, ListView, Static
 
-from filter import filter_responses
-from marked import marked
-from schemas import FormResponse
+from .filter import filter_responses
+from .marked import marked
+from .schemas import FormResponse
 
 
 class FlaggedView(Screen[None]):
@@ -164,17 +164,20 @@ class DiffAllView(Screen[None]):
 
     def on_input_submitted(self, message: Input.Changed):
         query = message.value
+        label = self.query_one("#fprompt", Static)
 
         try:
             min_ratio = float(query)
 
-            if 1 > min_ratio > 0:
+            if not 1 > min_ratio > 0:
                 raise ValueError("Ratio should be between 0 and 1")
         except ValueError:
-            label = self.query_one("#fprompt", Static)
             label.update("Invalid ratio - make sure it's a float in the range [0, 1]")
             message.input.value = ""
             return
+
+        label.update("Diffing...this may take a while")
+        self.app.refresh()
 
         filtered: list[tuple[FormResponse, FormResponse]] = []
         matcher = difflib.SequenceMatcher()
