@@ -3,7 +3,7 @@ import itertools
 
 from rich.syntax import Syntax
 from textual.app import ComposeResult
-from textual.containers import Grid, Vertical
+from textual.containers import Grid, Vertical, VerticalScroll
 from textual.reactive import var
 from textual.screen import Screen
 from textual.widgets import Button, Input, Label, ListItem, ListView, Static
@@ -27,7 +27,10 @@ class FlaggedView(Screen[None]):
                 classes="flagged",
             ),
             ListView(
-                *(ListItem(Label(r.user["username"]), classes="lilabel") for r in marked.generated),
+                *(
+                    ListItem(Label(r.user["username"]), classes="lilabel")
+                    for r in marked.generated
+                ),
                 classes="flagged",
             ),
             id="flagged-view",
@@ -85,9 +88,7 @@ class DiffView(Screen[None]):
             grid = self.query_one("#dialog", Grid)
             grid.remove()
 
-            self.app.sub_title = (
-                f"{self.first_response.user['username']} x {self.second_response.user['username']}"
-            )
+            self.app.sub_title = f"{self.first_response.user['username']} x {self.second_response.user['username']}"
 
             self.mount(
                 Static(
@@ -101,6 +102,37 @@ class DiffView(Screen[None]):
             self.app.pop_screen()
 
 
+class SelectedDiffView(Screen[None]):
+    def __init__(self, first: FormResponse, second: FormResponse):
+        self.first = first
+        self.second = second
+
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        differ = difflib.Differ()
+        html = differ.compare(
+            self.first.response["qualifier"]["value"].splitlines(),
+            self.second.response["qualifier"]["value"].splitlines(),
+        )
+
+        self.app.sub_title = (
+            f"{self.first.user['username']} x {self.second.user['username']}"
+        )
+
+        yield VerticalScroll(
+            Static(
+                f"{self.first.user['username']} x {self.second.user['username']}",
+                id="diff_title",
+            ),
+            Static(Syntax("\n".join(html), "diff", line_numbers=True)),
+            Button("Return", variant="warning", id="cancel"),
+        )
+
+    def on_button_pressed(self, _: Button.Pressed):
+        self.app.pop_screen()
+
+
 class FilterView(Screen[None]):
     def __init__(self, responses: list[FormResponse]):
         self.responses = responses
@@ -109,7 +141,9 @@ class FilterView(Screen[None]):
 
     def compose(self) -> ComposeResult:
         yield Vertical(
-            Static("Filter your results in the format `filter:<type>:value`.", id="fprompt"),
+            Static(
+                "Filter your results in the format `filter:<type>:value`.", id="fprompt"
+            ),
             Input(placeholder="query"),
             ListView(id="results"),
             Button("Return", variant="warning", id="cancel"),
@@ -137,7 +171,9 @@ class FilterView(Screen[None]):
 
     def on_list_view_selected(self, message: ListView.Selected):
         self.app.post_message(
-            ResponseTree.ResponseSelected(message.item.children[0].renderable, message.item.data)
+            ResponseTree.ResponseSelected(
+                message.item.children[0].renderable, message.item.data
+            )
         )
 
         self.app.pop_screen()
@@ -206,9 +242,13 @@ class DiffAllView(Screen[None]):
             item.data = response
             list_view.append(item)
 
+        label.update("Finished diffing, select a diff to view.")
+
     def on_list_view_selected(self, message: ListView.Selected):
         self.app.post_message(
-            ResponseTree.ResponseSelected(message.item.children[0].renderable, message.item.data)
+            ResponseTree.ResponseSelected(
+                message.item.children[0].renderable, message.item.data
+            )
         )
 
         self.app.pop_screen()

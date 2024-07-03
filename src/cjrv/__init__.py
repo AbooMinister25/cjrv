@@ -19,7 +19,7 @@ from textual.widgets import (
 
 from .marked import marked
 from .schemas import FormResponse
-from .views import DiffAllView, DiffView, FilterView, FlaggedView
+from .views import DiffAllView, DiffView, FilterView, FlaggedView, SelectedDiffView
 from .widgets import ResponseTree
 
 
@@ -98,18 +98,24 @@ class Responses(App):
 
         yield Footer()
 
-    def on_response_tree_response_selected(self, message: ResponseTree.ResponseSelected):
+    def on_response_tree_response_selected(
+        self, message: ResponseTree.ResponseSelected
+    ):
         code_view = self.query_one("#code", Static)
-        code = message.data.response["qualifier"]["value"]
-        syntax = Syntax(code, "python", line_numbers=True)
 
-        code_view.update(syntax)
-        self.sub_title = message.label
+        if isinstance(message.data, tuple):
+            self.push_screen(SelectedDiffView(message.data[0], message.data[1]))
+        else:
+            code = message.data.response["qualifier"]["value"]
+            syntax = Syntax(code, "python", line_numbers=True)
 
-        form_info = self.query_one("#form-info", Pretty)
-        form_info.update(asdict(message.data))
+            code_view.update(syntax)
+            self.sub_title = message.label
 
-        self.currently_selected = message.data
+            form_info = self.query_one("#form-info", Pretty)
+            form_info.update(asdict(message.data))
+
+            self.currently_selected = message.data
 
     def action_toggle_tree(self) -> None:
         """Called in response to key binding."""
